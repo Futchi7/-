@@ -1,0 +1,620 @@
+<title>今日はこれ 試作</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@500;700;900&family=BIZ+UDPGothic:wght@400;700&display=swap">
+<style>
+:root{
+  --bg:#EEF1EC; --surface:#FFFFFF; --surface-2:#F4F6F2; --ink:#1E2621; --ink-2:#5B665F; --line:#D9DFD8;
+  --accent:#2E7A4E; --accent-ink:#FFFFFF; --accent-soft:#DCEBDF;
+  --yolk:#E9A81C; --yolk-soft:#FCEFC7; --yolk-ink:#6B4A00;
+  --plate-s:52%; --plate-l:87%; --plate-ink:#1E2621;
+  --shadow:0 1px 2px rgba(30,38,33,.06),0 8px 24px rgba(30,38,33,.08);
+  --f-disp:"Zen Maru Gothic","Hiragino Maru Gothic ProN","BIZ UDPGothic",sans-serif;
+  --f-body:"BIZ UDPGothic","Hiragino Sans","Noto Sans JP",system-ui,sans-serif;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --bg:#101512; --surface:#182019; --surface-2:#1F2921; --ink:#E6ECE7; --ink-2:#9AA79F; --line:#2C372F;
+    --accent:#6CC28E; --accent-ink:#0E1A12; --accent-soft:#213A2A;
+    --yolk:#F5C451; --yolk-soft:#3A3019; --yolk-ink:#F5DFA4;
+    --plate-s:28%; --plate-l:26%; --plate-ink:#E6ECE7;
+    --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 24px rgba(0,0,0,.35);
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --bg:#101512; --surface:#182019; --surface-2:#1F2921; --ink:#E6ECE7; --ink-2:#9AA79F; --line:#2C372F;
+  --accent:#6CC28E; --accent-ink:#0E1A12; --accent-soft:#213A2A;
+  --yolk:#F5C451; --yolk-soft:#3A3019; --yolk-ink:#F5DFA4;
+  --plate-s:28%; --plate-l:26%; --plate-ink:#E6ECE7;
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 24px rgba(0,0,0,.35);
+}
+html,body{height:100%}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.6;-webkit-font-smoothing:antialiased}
+*{box-sizing:border-box}
+button,input{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:8px}
+.num{font-variant-numeric:tabular-nums}
+
+.app{max-width:420px;margin:0 auto;min-height:100%;display:flex;flex-direction:column;background:var(--bg)}
+.proto-note{margin:10px 16px 0;padding:6px 10px;border:1px dashed var(--line);border-radius:10px;font-size:12px;color:var(--ink-2)}
+main{flex:1;padding:0 16px 24px}
+.screen{display:flex;flex-direction:column;gap:16px}
+
+.top{display:flex;align-items:flex-end;justify-content:space-between;padding-block:14px 2px}
+.brand{font-family:var(--f-disp);font-weight:900;font-size:22px;letter-spacing:.02em}
+.brand small{display:block;font-family:var(--f-body);font-weight:400;font-size:12px;color:var(--ink-2);letter-spacing:.04em}
+.back{display:inline-flex;align-items:center;gap:4px;background:none;border:0;padding:12px 0 4px;color:var(--ink-2);font-size:14px}
+
+.chips{display:flex;gap:8px;overflow-x:auto;padding-bottom:2px;scrollbar-width:none}
+.chips::-webkit-scrollbar{display:none}
+.chip{flex:none;border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:6px 12px;font-size:13px;color:var(--ink-2)}
+.chip[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink);font-weight:700}
+
+.fridge-on{display:flex;align-items:center;gap:8px;background:var(--accent-soft);border-radius:12px;padding:8px 12px;font-size:13px}
+.fridge-on span{flex:1}
+.x{border:0;background:none;color:var(--ink-2);font-size:13px;text-decoration:underline;padding:4px}
+
+.pick{background:var(--surface);border-radius:24px;box-shadow:var(--shadow);padding:20px;display:flex;flex-direction:column;gap:14px}
+.eyebrow{font-size:12px;letter-spacing:.12em;color:var(--accent);font-weight:700}
+.pick-head{display:flex;gap:16px;align-items:center}
+.plate{flex:none;width:96px;height:96px;border-radius:50%;display:grid;place-items:center;
+  background:radial-gradient(circle at 50% 50%,hsl(var(--h) var(--plate-s) calc(var(--plate-l) + 4%)) 0 52%,hsl(var(--h) var(--plate-s) var(--plate-l)) 53% 100%);
+  box-shadow:inset 0 0 0 6px hsl(var(--h) var(--plate-s) calc(var(--plate-l) - 6%));
+  font-family:var(--f-disp);font-weight:900;font-size:40px;color:var(--plate-ink)}
+.plate.big{width:120px;height:120px;font-size:52px}
+.dish{font-family:var(--f-disp);font-weight:900;font-size:26px;line-height:1.25;text-wrap:balance;margin:0}
+.sub{color:var(--ink-2);font-size:13px;margin-top:4px}
+.meta{display:flex;flex-wrap:wrap;gap:6px}
+.tag{font-size:12px;padding:3px 9px;border-radius:999px;background:var(--surface-2);color:var(--ink-2)}
+.price{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
+.price b{font-family:var(--f-disp);font-weight:900;font-size:28px}
+.price span{color:var(--ink-2);font-size:13px}
+.reason{background:var(--yolk-soft);color:var(--yolk-ink);border-radius:12px;padding:10px 12px;font-size:13.5px;line-height:1.55}
+.reason::before{content:"選んだ理由　";font-weight:700}
+
+.btn{border:0;border-radius:14px;padding:14px 16px;font-weight:700;font-size:16px;width:100%;display:flex;align-items:center;justify-content:center;gap:8px}
+.btn-primary{background:var(--accent);color:var(--accent-ink)}
+.btn-ghost{background:var(--surface-2);color:var(--ink)}
+.btn-row{display:flex;gap:10px}
+.btn-row .btn{flex:1}
+.linkish{background:none;border:0;color:var(--ink-2);font-size:14px;padding:6px;text-decoration:underline;text-underline-offset:3px}
+.center{display:flex;justify-content:center}
+
+.tile{display:flex;align-items:center;gap:12px;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:14px;width:100%;text-align:left}
+.tile .ic{flex:none;width:40px;height:40px;border-radius:12px;background:var(--accent-soft);color:var(--accent);display:grid;place-items:center}
+.tile b{display:block;font-size:15px}
+.tile small{color:var(--ink-2);font-size:12.5px}
+.tile .chev{margin-left:auto;color:var(--ink-2)}
+
+.month{background:var(--surface);border-radius:16px;padding:14px;display:flex;flex-direction:column;gap:8px;border:1px solid var(--line)}
+.month-row{display:flex;justify-content:space-between;align-items:baseline;gap:8px;font-size:13px;color:var(--ink-2)}
+.month-row b{font-family:var(--f-disp);font-size:20px;color:var(--ink)}
+.bar{height:10px;border-radius:999px;background:var(--surface-2);overflow:hidden;display:flex}
+.bar i{display:block;height:100%}
+.bar .used{background:var(--accent)}
+
+h2{font-family:var(--f-disp);font-weight:900;font-size:20px;margin:0}
+h3{font-size:14px;margin:0;color:var(--ink-2);letter-spacing:.06em}
+.panel{background:var(--surface);border-radius:18px;padding:16px;display:flex;flex-direction:column;gap:10px;border:1px solid var(--line)}
+.ing{width:100%;border-collapse:collapse;font-size:14px}
+.ing td{padding:7px 0;border-bottom:1px dashed var(--line)}
+.ing td:nth-child(2){color:var(--ink-2);padding-inline:8px;white-space:nowrap}
+.ing td:last-child{text-align:right;white-space:nowrap}
+.ing tr.total td{border-bottom:0;font-weight:700;padding-top:10px}
+.stepper{display:flex;align-items:center;gap:10px;font-size:14px}
+.stepper button{width:34px;height:34px;border-radius:50%;border:1px solid var(--line);background:var(--surface-2);font-size:18px;line-height:1}
+.steps{margin:0;padding:0;list-style:none;counter-reset:s;display:flex;flex-direction:column;gap:10px}
+.steps li{counter-increment:s;display:flex;gap:10px;font-size:14.5px}
+.steps li::before{content:counter(s);flex:none;width:24px;height:24px;border-radius:50%;background:var(--accent);color:var(--accent-ink);font-size:13px;font-weight:700;display:grid;place-items:center;margin-top:1px}
+.side-note{font-size:14px;margin:0}
+.side-note b{display:block;font-size:13px;color:var(--ink-2)}
+
+.upload{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;border:2px dashed var(--line);border-radius:20px;padding:28px 16px;background:var(--surface);text-align:center;cursor:pointer}
+.upload .ic{width:56px;height:56px;border-radius:50%;background:var(--accent);color:var(--accent-ink);display:grid;place-items:center}
+.upload b{font-size:16px}
+.upload small{color:var(--ink-2)}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+.photo{width:100%;aspect-ratio:4/3;max-width:100%;border-radius:16px;object-fit:cover;background:var(--surface-2)}
+.scan{display:flex;align-items:center;gap:10px;font-size:14px;color:var(--ink-2)}
+.dot{width:10px;height:10px;border-radius:50%;background:var(--accent);animation:pulse 1s infinite}
+@keyframes pulse{50%{opacity:.25}}
+@media (prefers-reduced-motion:reduce){.dot{animation:none}}
+.found{display:flex;flex-wrap:wrap;gap:8px}
+.found .chip{font-size:14px;padding:8px 12px}
+.found .chip.unsure{border-style:dashed}
+.found .chip em{font-style:normal;font-size:11px;margin-left:4px;opacity:.8}
+.addrow{display:flex;gap:8px}
+.addrow input{flex:1;min-width:0;border:1px solid var(--line);border-radius:12px;padding:10px 12px;background:var(--surface)}
+.addrow button{border:0;border-radius:12px;padding:0 14px;background:var(--surface-2);font-weight:700}
+
+.list{display:flex;flex-direction:column}
+.item{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px dashed var(--line);cursor:pointer}
+.item input{width:22px;height:22px;accent-color:var(--accent);flex:none}
+.item span{flex:1}
+.item.done span{color:var(--ink-2);text-decoration:line-through}
+.item em{font-style:normal;color:var(--ink-2);font-size:13px}
+.empty{text-align:center;color:var(--ink-2);padding:32px 8px;display:flex;flex-direction:column;gap:12px;align-items:center}
+
+.kpis{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.kpi{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:12px 14px}
+.kpi small{color:var(--ink-2);font-size:12px}
+.kpi b{display:block;font-family:var(--f-disp);font-weight:900;font-size:22px}
+.kpi.wide{grid-column:1/-1}
+.legend{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:12.5px;color:var(--ink-2)}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:5px;vertical-align:-1px}
+.c-meat{background:hsl(14 62% 56%)} .c-fish{background:hsl(205 55% 52%)} .c-noodle{background:hsl(42 80% 52%)} .c-egg{background:hsl(150 35% 50%)}
+.hist{display:flex;flex-direction:column}
+.hrow{display:grid;grid-template-columns:56px 1fr auto;gap:8px;align-items:center;padding:9px 0;border-bottom:1px dashed var(--line);font-size:14px}
+.hrow small{color:var(--ink-2)}
+.hrow .src{font-size:11px;padding:1px 6px;border-radius:6px;background:var(--surface-2);color:var(--ink-2);margin-left:6px}
+.hrow .src.real{background:var(--accent-soft);color:var(--accent)}
+
+nav.tabs{position:sticky;bottom:0;display:grid;grid-template-columns:repeat(3,1fr);background:var(--surface);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom,0px)}
+nav.tabs button{background:none;border:0;padding:8px 0 10px;display:flex;flex-direction:column;align-items:center;gap:2px;font-size:11.5px;color:var(--ink-2);position:relative}
+nav.tabs button[aria-current="page"]{color:var(--accent);font-weight:700}
+.badge[hidden]{display:none}
+.badge{position:absolute;top:4px;left:calc(50% + 8px);min-width:18px;height:18px;padding:0 5px;border-radius:9px;background:var(--yolk);color:#3A2800;font-size:11px;font-weight:700;display:grid;place-items:center}
+
+.sheet-wrap{position:fixed;inset:0;background:rgba(10,15,12,.45);display:flex;align-items:flex-end;justify-content:center;z-index:10}
+.sheet{width:100%;max-width:420px;background:var(--surface);border-radius:24px 24px 0 0;padding:20px 16px calc(20px + env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;gap:14px}
+.money-in{display:flex;align-items:center;gap:8px;border:1px solid var(--line);border-radius:14px;padding:10px 14px;background:var(--surface-2)}
+.money-in input{flex:1;min-width:0;border:0;background:none;font-family:var(--f-disp);font-weight:900;font-size:26px;outline:none}
+.hint{font-size:13px;color:var(--ink-2)}
+.toast{position:fixed;left:50%;bottom:84px;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:12px;font-size:14px;z-index:20;max-width:calc(100% - 32px)}
+</style>
+
+<div class="app">
+  <p class="proto-note">試作画面です。献立・金額・写真の読み取り結果は見本のデータです。</p>
+  <main id="main"></main>
+  <nav class="tabs" aria-label="画面の切り替え">
+    <button id="tab-home" data-tab="home"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 11a8 8 0 0 0 16 0Z"/><path d="M2 11h20M9 5c0-1 1-1 1-2M14 5c0-1 1-1 1-2"/></svg>今日</button>
+    <button id="tab-shop" data-tab="shop"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 4h2l2.4 11h11L21 7H6.2"/><circle cx="9" cy="20" r="1.4"/><circle cx="17" cy="20" r="1.4"/></svg>買い物<span class="badge" id="shop-badge" hidden></span></button>
+    <button id="tab-money" data-tab="money"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="6" width="18" height="13" rx="3"/><path d="M3 10h18M16 14.5h2"/></svg>家計</button>
+  </nav>
+</div>
+
+<script>
+/* ===== 見本データ（3人分の分量と推定価格） ===== */
+const MENUS=[
+ {id:1,name:"鶏の照り焼き",side:"キャベツの塩もみ",soup:"豆腐とわかめの味噌汁",cat:"肉",main:"鶏肉",mark:"鶏",genre:"和食",taste:"甘辛",time:25,tags:["子ども向け"],h:28,
+  ings:[["鶏もも肉","600g",540],["キャベツ","1/4個",60],["豆腐","1丁",60],["乾燥わかめ","ひとつまみ",15],["調味料（概算）","",40]],
+  steps:["鶏肉の皮目をフォークで数か所刺し、1枚を半分に切る","フライパンに皮目を下にして並べ、中火で5分焼く","裏返してふたをし、弱火で5分蒸し焼きにする","余分な脂をふき、しょうゆ・みりん・砂糖（各大さじ2）を入れる","たれを絡めて照りが出たら、切り分けて盛る"],
+  sideHow:"ざく切りのキャベツに塩を振って5分おき、水気を絞ってごま油をひとまわし。",soupHow:"だしに豆腐とわかめを入れ、火を止めて味噌を溶く。"},
+ {id:2,name:"豚の生姜焼き",side:"千切りキャベツとトマト",soup:"なめこ汁",cat:"肉",main:"豚肉",mark:"豚",genre:"和食",taste:"しょうゆ",time:20,tags:["がっつり"],h:12,
+  ings:[["豚ロース薄切り","400g",520],["キャベツ","1/4個",60],["トマト","1個",100],["なめこ","1袋",90],["調味料（概算）","",40]],
+  steps:["しょうゆ・みりん・酒（各大さじ2）とすりおろし生姜を混ぜる","豚肉に薄く小麦粉をまぶす","フライパンで豚肉を両面焼く","たれを加えて全体に絡める","キャベツとトマトを添えて盛る"],
+  sideHow:"キャベツは千切り、トマトはくし切りに。",soupHow:"だしになめこを入れて煮立て、味噌を溶く。"},
+ {id:3,name:"鮭のちゃんちゃん焼き",side:"ほうれん草のおひたし",soup:"大根の味噌汁",cat:"魚",main:"魚",mark:"鮭",genre:"和食",taste:"みそ",time:25,tags:["あっさり"],h:18,
+  ings:[["生鮭","3切れ",450],["キャベツ","1/4個",60],["玉ねぎ","1/2個",30],["ほうれん草","1束",180],["大根","1/4本",50],["調味料（概算）","",40]],
+  steps:["味噌・みりん（各大さじ2）と砂糖（小さじ1）を混ぜる","フライパンに野菜を敷き、上に鮭をのせる","合わせ味噌をかけ、ふたをして中火で10分","鮭に火が通ったらバターをのせる","崩しながら全体を混ぜて盛る"],
+  sideHow:"ほうれん草をゆでて水にとり、絞って切り、しょうゆとかつお節を。",soupHow:"いちょう切りの大根をだしで煮て、味噌を溶く。"},
+ {id:4,name:"麻婆豆腐",side:"春雨ときゅうりのサラダ",soup:"卵スープ",cat:"卵・豆腐",main:"豆腐",mark:"豆",genre:"中華",taste:"ピリ辛",time:20,tags:[],h:4,
+  ings:[["豆腐","2丁",120],["豚ひき肉","200g",240],["長ねぎ","1本",90],["春雨","50g",50],["きゅうり","1本",60],["卵","2個",60],["調味料（概算）","",60]],
+  steps:["豆腐を2cm角に切り、長ねぎをみじん切りにする","ひき肉を炒め、色が変わったら豆板醤・甜麺醤を加える","水200mlと鶏がらスープの素を入れて煮立てる","豆腐を入れて3分煮る","水溶き片栗粉でとろみをつけ、ねぎを散らす"],
+  sideHow:"戻した春雨と細切りきゅうりを、酢・しょうゆ・ごま油で和える。",soupHow:"鶏がらスープを煮立て、溶き卵を回し入れる。"},
+ {id:13,name:"ハンバーグ",side:"にんじんグラッセとブロッコリー",soup:"コーンスープ",cat:"肉",main:"ひき肉",mark:"肉",genre:"洋食",taste:"ソース",time:35,tags:["がっつり","子ども向け"],h:22,
+  ings:[["合いびき肉","400g",480],["玉ねぎ","1個",60],["卵","1個",30],["パン粉","1/2カップ",20],["ブロッコリー","1株",180],["にんじん","1/2本",30],["コーン缶","1缶",120],["牛乳","200ml",40],["調味料（概算）","",50]],
+  steps:["玉ねぎをみじん切りにして炒め、冷ます","ひき肉・玉ねぎ・卵・パン粉・塩こしょうを粘りが出るまで混ぜる","3等分して空気を抜き、真ん中をくぼませる","両面を焼き色がつくまで焼き、ふたをして弱火で8分","肉汁でケチャップとソースを煮詰めてかける"],
+  sideHow:"にんじんをバターと砂糖で煮る。ブロッコリーはゆでる。",soupHow:"コーン缶と牛乳を温め、コンソメで味を調える。"},
+ {id:14,name:"卵とトマトの中華炒め",side:"青菜のにんにく炒め",soup:"豆腐とねぎのスープ",cat:"卵・豆腐",main:"卵",mark:"卵",genre:"中華",taste:"塩",time:15,tags:["あっさり"],h:48,
+  ings:[["卵","6個",180],["トマト","2個",200],["小松菜","1束",150],["豆腐","1丁",60],["長ねぎ","1/2本",45],["調味料（概算）","",40]],
+  steps:["トマトをくし切りにし、卵を溶いて塩少々を混ぜる","多めの油で卵を半熟に炒めて取り出す","同じフライパンでトマトを1分炒める","卵を戻し、鶏がらスープの素と砂糖少々で味をつける","さっと混ぜて火を止める"],
+  sideHow:"小松菜をにんにくと一緒に強火で炒め、塩で味つけ。",soupHow:"鶏がらスープに豆腐と刻みねぎを入れる。"},
+ {id:5,name:"鯖の味噌煮",side:"小松菜と油揚げの煮びたし",soup:"豆腐の味噌汁",cat:"魚",main:"魚",mark:"鯖",genre:"和食",taste:"みそ",time:25,tags:[],h:200,
+  ings:[["鯖","3切れ",420],["生姜","1かけ",30],["小松菜","1束",150],["油揚げ","1枚",50],["豆腐","1丁",60],["調味料（概算）","",40]],
+  steps:["鯖に熱湯をかけて臭みを取る","水・酒・砂糖と生姜を煮立てる","鯖を入れ、落としぶたで8分煮る","味噌を溶き入れてさらに5分","煮汁をかけながら照りを出す"],
+  sideHow:"だしで小松菜と油揚げを3分煮る。",soupHow:"だしに豆腐を入れ、味噌を溶く。"},
+ {id:6,name:"焼きうどん",side:"冷ややっこ",soup:"",cat:"麺・丼",main:"豚肉",mark:"麺",genre:"和食",taste:"しょうゆ",time:15,tags:[],h:38,
+  ings:[["ゆでうどん","3玉",120],["豚こま","200g",240],["キャベツ","1/4個",60],["にんじん","1/2本",30],["豆腐","1丁",60],["調味料（概算）","",40]],
+  steps:["野菜を食べやすく切る","豚肉を炒め、野菜を加えて炒める","うどんを入れて水大さじ2でほぐす","しょうゆ・めんつゆで味をつける","かつお節をのせる"],
+  sideHow:"豆腐を切ってねぎとしょうがをのせる。",soupHow:""},
+ {id:7,name:"親子丼",side:"小松菜のごま和え",soup:"玉ねぎの味噌汁",cat:"麺・丼",main:"鶏肉",mark:"丼",genre:"和食",taste:"甘辛",time:20,tags:["子ども向け"],h:40,
+  ings:[["鶏もも肉","300g",270],["卵","4個",120],["玉ねぎ","1個",60],["小松菜","1束",150],["調味料（概算）","",40]],
+  steps:["鶏肉をひと口大、玉ねぎを薄切りにする","めんつゆと水で玉ねぎを煮る","鶏肉を加えて火を通す","溶き卵を回し入れ、半熟で火を止める","ご飯にのせる"],
+  sideHow:"ゆでた小松菜をすりごま・しょうゆ・砂糖で和える。",soupHow:"玉ねぎをだしで煮て味噌を溶く。"},
+ {id:8,name:"チキンのトマト煮",side:"グリーンサラダ",soup:"コンソメスープ",cat:"肉",main:"鶏肉",mark:"鶏",genre:"洋食",taste:"トマト",time:30,tags:[],h:6,
+  ings:[["鶏もも肉","600g",540],["トマト缶","1缶",110],["玉ねぎ","1個",60],["しめじ","1袋",100],["レタス","1/2個",100],["にんじん","1/2本",30],["調味料（概算）","",50]],
+  steps:["鶏肉をひと口大に切り、塩こしょうする","鶏肉を焼き色がつくまで焼く","玉ねぎ・しめじを加えて炒める","トマト缶とコンソメを入れ、15分煮る","塩で味を調える"],
+  sideHow:"レタスをちぎり、好みのドレッシングで。",soupHow:"にんじんをコンソメで煮る。"},
+ {id:9,name:"豚キムチ炒め",side:"もやしのナムル",soup:"わかめスープ",cat:"肉",main:"豚肉",mark:"豚",genre:"韓国風",taste:"ピリ辛",time:15,tags:["がっつり"],h:0,
+  ings:[["豚こま","300g",360],["キムチ","200g",200],["にら","1束",100],["もやし","2袋",60],["乾燥わかめ","ひとつまみ",15],["調味料（概算）","",40]],
+  steps:["豚肉を炒める","キムチを加えて炒め合わせる","にらを入れてさっと炒める","しょうゆ少々で味を調える","ごま油をたらす"],
+  sideHow:"もやしをゆで、塩・ごま油・すりごまで和える。",soupHow:"鶏がらスープにわかめを入れる。"},
+ {id:10,name:"鶏むねのから揚げ",side:"ポテトサラダ",soup:"しめじの味噌汁",cat:"肉",main:"鶏肉",mark:"鶏",genre:"和食",taste:"塩",time:35,tags:["がっつり","子ども向け"],h:34,
+  ings:[["鶏むね肉","600g",360],["じゃがいも","3個",150],["きゅうり","1本",60],["にんじん","1/2本",30],["しめじ","1袋",100],["調味料・油（概算）","",80]],
+  steps:["鶏肉をそぎ切りにし、しょうゆ・生姜・にんにくに10分漬ける","片栗粉をまぶす","170℃の油で4分揚げる","一度取り出して2分休ませる","180℃で1分揚げてカリッとさせる"],
+  sideHow:"ゆでたじゃがいもをつぶし、きゅうり・にんじんとマヨネーズで和える。",soupHow:"しめじをだしで煮て味噌を溶く。"},
+ {id:11,name:"和風きのこパスタ",side:"ツナとキャベツのサラダ",soup:"",cat:"麺・丼",main:"きのこ",mark:"麺",genre:"洋食",taste:"しょうゆ",time:20,tags:["あっさり"],h:30,
+  ings:[["パスタ","300g",90],["しめじ","1袋",100],["エリンギ","1パック",100],["ベーコン","1パック",150],["キャベツ","1/4個",60],["ツナ缶","1缶",120],["調味料（概算）","",40]],
+  steps:["パスタをゆで始める","ベーコンときのこをバターで炒める","しょうゆとゆで汁少々を加える","ゆで上がったパスタを絡める","刻みのりをのせる"],
+  sideHow:"千切りキャベツとツナをマヨネーズで和える。",soupHow:""},
+ {id:12,name:"ぶりの照り焼き",side:"豆腐とトマトのサラダ",soup:"大根の味噌汁",cat:"魚",main:"魚",mark:"鰤",genre:"和食",taste:"甘辛",time:20,tags:[],h:215,
+  ings:[["ぶり","3切れ",540],["大根","1/4本",50],["豆腐","1丁",60],["トマト","1個",100],["調味料（概算）","",40]],
+  steps:["ぶりに塩を振って10分おき、水気をふく","小麦粉を薄くまぶして両面を焼く","余分な脂をふき取る","しょうゆ・みりん・酒（各大さじ2）を加える","煮詰めて絡める"],
+  sideHow:"豆腐とトマトを切り、ポン酢とごま油をかける。",soupHow:"大根をだしで煮て味噌を溶く。"}
+];
+const CAT_CLASS={"肉":"c-meat","魚":"c-fish","麺・丼":"c-noodle","卵・豆腐":"c-egg"};
+const CATS=["肉","魚","麺・丼","卵・豆腐"];
+const BASE_PEOPLE=3, TODAY="9/24";
+const settings={people:3,perPersonBudget:450,monthBudget:40000};
+
+/* 9月の記録（見本）：アプリ外で作った料理も含む。real=実際の金額 */
+const LOGS=[
+ ["9/1","カレーライス","肉","豚肉","洋食","カレー",820,true],
+ ["9/2","鮭のちゃんちゃん焼き","魚","魚","和食","みそ",810,false,3],
+ ["9/3","卵とトマトの中華炒め","卵・豆腐","卵","中華","塩",675,false,14],
+ ["9/5","ハンバーグ","肉","ひき肉","洋食","ソース",1080,true,13],
+ ["9/6","焼きそば","麺・丼","豚肉","和食","ソース",520,false],
+ ["9/7","鶏の照り焼き","肉","鶏肉","和食","甘辛",690,true,1],
+ ["9/8","寄せ鍋","魚","魚","和食","しょうゆ",1150,true],
+ ["9/9","麻婆豆腐","卵・豆腐","豆腐","中華","ピリ辛",680,false,4],
+ ["9/10","鶏むねのから揚げ","肉","鶏肉","和食","塩",820,true,10],
+ ["9/11","さんまの塩焼き","魚","魚","和食","塩",620,true],
+ ["9/12","和風きのこパスタ","麺・丼","きのこ","洋食","しょうゆ",660,false,11],
+ ["9/13","豚しゃぶサラダ","肉","豚肉","和食","ポン酢",760,false],
+ ["9/15","ぶりの照り焼き","魚","魚","和食","甘辛",760,true,12],
+ ["9/16","オムライス","卵・豆腐","卵","洋食","ケチャップ",600,false],
+ ["9/17","焼きうどん","麺・丼","豚肉","和食","しょうゆ",550,false,6],
+ ["9/18","チキンのトマト煮","肉","鶏肉","洋食","トマト",950,true,8],
+ ["9/19","肉じゃが","肉","豚肉","和食","甘辛",700,false],
+ ["9/20","鶏の水炊き","肉","鶏肉","和食","ポン酢",980,false],
+ ["9/21","親子丼","麺・丼","鶏肉","和食","甘辛",610,true,7],
+ ["9/22","豚キムチ炒め","肉","豚肉","韓国風","ピリ辛",775,false,9],
+ ["9/23","鯖の味噌煮","魚","魚","和食","みそ",780,true,5]
+].map(r=>({d:r[0],name:r[1],cat:r[2],main:r[3],genre:r[4],taste:r[5],cost:r[6],real:r[7],id:r[8]||null}));
+
+const SAMPLE_FOUND=[
+ {n:"鶏もも肉",on:true},{n:"キャベツ",on:true},{n:"卵",on:true},{n:"豆腐",on:true},
+ {n:"にんじん",on:true},{n:"長ねぎ",on:true},{n:"ピーマン",on:false,unsure:true}
+];
+
+/* ===== 状態 ===== */
+const S={tab:"home",view:"home",filters:new Set(),fridge:[],rank:[],idx:0,decided:null,
+  shop:[],found:null,photo:null,scanning:false,detailId:null};
+
+const yen=n=>Math.round(n).toLocaleString("ja-JP");
+const menuCost=(m,p=settings.people)=>m.ings.reduce((a,i)=>a+i[2],0)*p/BASE_PEOPLE;
+const perPerson=m=>menuCost(m,BASE_PEOPLE)/BASE_PEOPLE;
+const dayNum=d=>+d.split("/")[1];
+function daysAgo(d){return 24-dayNum(d)}
+function seeded(n){let x=Math.sin(n*9301+49297)*233280;return x-Math.floor(x)}
+
+function flags(m){
+  const f=[];
+  if(m.time<=20)f.push("時短");
+  if(perPerson(m)<=230)f.push("節約");
+  return f.concat(m.tags);
+}
+
+/* ===== 提案の点数づけ ===== */
+function rankMenus(){
+  const recent=LOGS.slice().sort((a,b)=>dayNum(b.d)-dayNum(a.d));
+  const y=recent[0], y2=recent[1];
+  const within=(n)=>recent.filter(l=>daysAgo(l.d)<=n);
+  const score=(m,noRepeatDays)=>{
+    if(within(noRepeatDays).some(l=>l.id===m.id))return null;
+    if(perPerson(m)>settings.perPersonBudget)return null;
+    for(const f of S.filters) if(!flags(m).includes(f))return null;
+    let s=100;
+    if(y && m.main===y.main)s-=40;
+    if(y2 && m.main===y2.main)s-=15;
+    if(y && m.genre===y.genre)s-=20;
+    if(within(3).some(l=>l.taste===m.taste))s-=15;
+    const hit=m.ings.filter(i=>S.fridge.some(f=>i[0].includes(f)||f.includes(i[0]))).length;
+    s+=hit*25;
+    s+=seeded(m.id)*10;
+    return {m,s,hit};
+  };
+  let list=MENUS.map(m=>score(m,14)).filter(Boolean);
+  if(list.length<3) list=MENUS.map(m=>score(m,7)).filter(Boolean);
+  list.sort((a,b)=>b.s-a.s);
+  S.rank=list; S.idx=0;
+}
+function current(){return S.rank[S.idx]}
+function nextPick(){
+  if(S.rank.length<2)return;
+  const cur=current().m;
+  for(let k=1;k<S.rank.length;k++){
+    const j=(S.idx+k)%S.rank.length, c=S.rank[j].m;
+    if(c.genre!==cur.genre||c.main!==cur.main){S.idx=j;return}
+  }
+  S.idx=(S.idx+1)%S.rank.length;
+}
+function reasonFor(r){
+  const m=r.m, recent=LOGS.slice().sort((a,b)=>dayNum(b.d)-dayNum(a.d));
+  const y=recent[0], y2=recent[1];
+  const bits=[];
+  if(r.hit>0){
+    const used=m.ings.filter(i=>S.fridge.some(f=>i[0].includes(f)||f.includes(i[0]))).map(i=>i[0]);
+    bits.push(`冷蔵庫の${used.slice(0,3).join("・")}が使えます。`);
+  }
+  const catWord=c=>c==="魚"?"お魚":c==="肉"?"お肉":c;
+  if(y){
+    bits.push(`昨日は${catWord(y.cat)}（${y.name}）${y2?`、おとといは${y2.main}`:""}だったので、今日は${m.genre}の${m.name}にしました。`);
+  }
+  bits.push(`1人前${yen(perPerson(m))}円で、予算${settings.perPersonBudget}円の範囲内です。`);
+  return bits.join("");
+}
+
+/* ===== 描画 ===== */
+const $main=document.getElementById("main");
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+
+function monthTotals(){
+  const total=LOGS.reduce((a,l)=>a+l.cost,0);
+  return {total,count:LOGS.length,avg:total/LOGS.length};
+}
+
+function renderHome(){
+  const r=current();
+  const mt=monthTotals();
+  const pct=Math.min(100,mt.total/settings.monthBudget*100);
+  const filt=["時短","節約","がっつり","あっさり","子ども向け"].map(f=>
+    `<button class="chip" data-filter="${f}" aria-pressed="${S.filters.has(f)}">${f}</button>`).join("");
+  let card;
+  if(!r){
+    card=`<div class="pick"><p class="eyebrow">今日はこれです</p><p>この条件に合う献立が見つかりません。条件を1つ外してください。</p></div>`;
+  }else{
+    const m=S.decided?MENUS.find(x=>x.id===S.decided):r.m;
+    const decided=!!S.decided;
+    card=`<article class="pick" aria-live="polite">
+      <p class="eyebrow">${decided?"今日の晩ごはん（決定）":"今日はこれです"}</p>
+      <div class="pick-head">
+        <div class="plate" style="--h:${m.h}" aria-hidden="true">${m.mark}</div>
+        <div><h1 class="dish">${m.name}</h1>
+          <p class="sub">${[m.side,m.soup].filter(Boolean).join("／")}</p></div>
+      </div>
+      <div class="price num"><b>約${yen(menuCost(m))}円</b><span>${settings.people}人分・1人前${yen(menuCost(m)/settings.people)}円</span></div>
+      <div class="meta"><span class="tag">${m.time}分</span><span class="tag">${m.genre}</span><span class="tag">${m.cat}</span>${flags(m).map(f=>`<span class="tag">${f}</span>`).join("")}</div>
+      ${decided?"":`<p class="reason">${reasonFor(r)}</p>`}
+      ${decided?`
+        <div class="btn-row"><button class="btn btn-ghost" data-act="detail" data-id="${m.id}">作り方を見る</button>
+        <button class="btn btn-primary" data-act="cooked">作った！記録する</button></div>
+        <div class="center"><button class="linkish" data-act="undecide">やっぱり変える</button></div>`
+      :`
+        <button class="btn btn-primary" data-act="decide">これにする</button>
+        <div class="btn-row"><button class="btn btn-ghost" data-act="reroll">ほかのにする</button>
+        <button class="btn btn-ghost" data-act="detail" data-id="${m.id}">作り方を見る</button></div>`}
+    </article>`;
+  }
+  $main.innerHTML=`<section class="screen">
+    <header class="top"><div class="brand">今日はこれ<small>9月24日（木）の晩ごはん</small></div></header>
+    ${S.decided?"":`<div class="chips" role="group" aria-label="条件">${filt}</div>`}
+    ${S.fridge.length&&!S.decided?`<div class="fridge-on"><span>冷蔵庫の食材を優先中：${S.fridge.map(esc).join("・")}</span><button class="x" data-act="clearfridge">解除</button></div>`:""}
+    ${card}
+    ${S.decided?"":`<button class="tile" data-act="fridge"><span class="ic">${camIcon(22)}</span><span><b>冷蔵庫を撮って決める</b><small>写真から食材を読み取り、それを使う献立にします</small></span><span class="chev">›</span></button>`}
+    <div class="month">
+      <div class="month-row"><span>9月の晩ごはん代</span><span class="num"><b>${yen(mt.total)}</b> / 予算 ${yen(settings.monthBudget)}円</span></div>
+      <div class="bar" role="img" aria-label="予算の${Math.round(pct)}%を使用"><i class="used" style="width:${pct}%"></i></div>
+      <div class="month-row"><span>残り ${yen(settings.monthBudget-mt.total)}円</span><span>1食平均 ${yen(mt.avg)}円</span></div>
+    </div>
+  </section>`;
+}
+
+function renderDetail(){
+  const m=MENUS.find(x=>x.id===S.detailId);
+  const k=settings.people/BASE_PEOPLE;
+  const rows=m.ings.map(i=>`<tr><td>${i[0]}</td><td>${i[1]?scaleQty(i[1],k):""}</td><td class="num">${yen(i[2]*k)}円</td></tr>`).join("");
+  $main.innerHTML=`<section class="screen">
+    <button class="back" data-act="home">‹ もどる</button>
+    <div class="pick-head"><div class="plate big" style="--h:${m.h}" aria-hidden="true">${m.mark}</div>
+      <div><h1 class="dish">${m.name}</h1><p class="sub">${m.time}分・${m.genre}</p></div></div>
+    <div class="panel">
+      <div class="stepper"><span style="flex:1">人数</span>
+        <button data-act="ppl-" aria-label="1人減らす">−</button><b class="num" style="min-width:3em;text-align:center">${settings.people}人</b><button data-act="ppl+" aria-label="1人増やす">＋</button></div>
+      <h3>材料と推定費用</h3>
+      <table class="ing"><tbody>${rows}
+        <tr class="total"><td>合計</td><td></td><td class="num">約${yen(menuCost(m))}円</td></tr></tbody></table>
+      <p class="hint">1人前 約${yen(menuCost(m)/settings.people)}円。価格は全国の平均的な値段をもとにした推定です。</p>
+    </div>
+    <div class="panel"><h3>主菜の作り方</h3><ol class="steps">${m.steps.map(s=>`<li>${s}</li>`).join("")}</ol></div>
+    <div class="panel">
+      <p class="side-note"><b>副菜：${m.side}</b>${m.sideHow}</p>
+      ${m.soup?`<p class="side-note"><b>汁物：${m.soup}</b>${m.soupHow}</p>`:""}
+    </div>
+    ${S.decided===m.id?`<button class="btn btn-primary" data-act="cooked">作った！記録する</button>`
+      :`<button class="btn btn-primary" data-act="decide" data-id="${m.id}">これにする</button>`}
+  </section>`;
+}
+function scaleQty(q,k){
+  if(k===1)return q;
+  let mm=q.match(/^(\d+)\/(\d+)(.*)$/), v, unit;
+  if(mm){v=mm[1]/mm[2]*k;unit=mm[3]}
+  else{mm=q.match(/^(\d+(?:\.\d+)?)(.*)$/);if(!mm)return q;v=parseFloat(mm[1])*k;unit=mm[2]}
+  if(/^(g|ml)/.test(unit))return Math.round(v/10)*10+unit;
+  if(v<1){
+    const fr=[[1/4,"1/4"],[1/3,"1/3"],[1/2,"1/2"],[2/3,"2/3"],[3/4,"3/4"]];
+    return fr.reduce((a,b)=>Math.abs(b[0]-v)<Math.abs(a[0]-v)?b:a)[1]+unit;
+  }
+  return (Math.round(v*2)/2)+unit;
+}
+
+function renderFridge(){
+  let body="";
+  if(!S.photo){
+    body=`<label class="upload" for="photo-in">
+        <span class="ic">${camIcon(28)}</span><b>写真を撮る・選ぶ</b>
+        <small>冷蔵庫を開けて1〜2枚。ドアポケットも写すと精度が上がります</small></label>
+      <input class="sr" id="photo-in" type="file" accept="image/*" capture="environment">
+      <div class="center"><button class="linkish" data-act="sample">見本の写真で試す</button></div>`;
+  }else{
+    const img=S.photo==="sample"?sampleFridgeSVG():`<img class="photo" src="${S.photo}" alt="撮影した冷蔵庫の写真">`;
+    body=img;
+    if(S.scanning){
+      body+=`<p class="scan"><span class="dot"></span>食材を読み取っています…</p>`;
+    }else{
+      body+=`<div class="panel">
+        <h3>見つかった食材（タップで外す・入れる）</h3>
+        <div class="found">${S.found.map((f,i)=>`<button class="chip ${f.unsure?"unsure":""}" data-act="toggle-found" data-i="${i}" aria-pressed="${f.on}">${esc(f.n)}${f.unsure?"<em>自信なし</em>":""}</button>`).join("")}</div>
+        <form class="addrow" id="add-form"><input id="add-in" placeholder="足りない食材を追加（例：しめじ）" aria-label="食材を追加"><button>追加</button></form>
+        <p class="hint">容器の中や引き出しの奥は見えないことがあります。違っていたら直してください。</p>
+      </div>
+      <button class="btn btn-primary" data-act="use-found">この食材で「今日はこれ」を決める</button>
+      <div class="center"><button class="linkish" data-act="retake">撮り直す</button></div>`;
+    }
+  }
+  $main.innerHTML=`<section class="screen">
+    <button class="back" data-act="home">‹ もどる</button>
+    <h2>冷蔵庫を撮る</h2>
+    <p class="hint" style="margin:0">撮った写真は献立を決めるためだけに使い、在庫としては残しません。</p>
+    ${body}
+  </section>`;
+}
+function sampleFridgeSVG(){
+  return `<svg class="photo" viewBox="0 0 400 300" role="img" aria-label="見本の冷蔵庫の写真">
+    <rect width="400" height="300" fill="#dfe8ea"/><rect x="20" y="16" width="360" height="268" rx="10" fill="#f5f8f8" stroke="#b9c7ca"/>
+    <line x1="20" y1="110" x2="380" y2="110" stroke="#b9c7ca" stroke-width="3"/><line x1="20" y1="200" x2="380" y2="200" stroke="#b9c7ca" stroke-width="3"/>
+    <rect x="40" y="60" width="90" height="46" rx="6" fill="#f2c2b3"/><text x="85" y="89" font-size="14" text-anchor="middle" fill="#5a2a1c">鶏もも</text>
+    <ellipse cx="190" cy="80" rx="42" ry="30" fill="#b9dc9c"/><text x="190" y="85" font-size="13" text-anchor="middle" fill="#2c4a17">キャベツ</text>
+    <rect x="260" y="70" width="100" height="36" rx="6" fill="#fff3d6" stroke="#e0c98f"/><circle cx="280" cy="88" r="9" fill="#fbe7b5"/><circle cx="302" cy="88" r="9" fill="#fbe7b5"/><circle cx="324" cy="88" r="9" fill="#fbe7b5"/><circle cx="346" cy="88" r="9" fill="#fbe7b5"/>
+    <rect x="44" y="150" width="80" height="46" rx="4" fill="#ffffff" stroke="#c8cfd1"/><text x="84" y="178" font-size="13" text-anchor="middle" fill="#445">豆腐</text>
+    <rect x="150" y="170" width="120" height="14" rx="7" fill="#f09a4a" transform="rotate(-8 210 177)"/><text x="206" y="160" font-size="12" text-anchor="middle" fill="#6a3a10">にんじん</text>
+    <rect x="290" y="130" width="14" height="66" rx="6" fill="#e9f1e2"/><rect x="290" y="130" width="14" height="24" rx="6" fill="#7fb36a"/><text x="330" y="176" font-size="12" fill="#335">ねぎ</text>
+    <rect x="50" y="222" width="130" height="50" rx="8" fill="#d2dde0"/><text x="115" y="252" font-size="12" text-anchor="middle" fill="#556">野菜室（奥は見えにくい）</text>
+    <ellipse cx="250" cy="248" rx="22" ry="16" fill="#5f9a4a"/><text x="300" y="252" font-size="12" fill="#335">？</text>
+  </svg>`;
+}
+
+function renderShop(){
+  const left=S.shop.filter(i=>!i.done);
+  if(!S.shop.length){
+    $main.innerHTML=`<section class="screen"><header class="top"><div class="brand">買い物リスト</div></header>
+      <div class="empty"><p>献立を決めると、ここに材料が入ります。</p><button class="btn btn-primary" style="max-width:240px" data-act="home">今日の献立を決める</button></div></section>`;
+    return;
+  }
+  const m=MENUS.find(x=>x.id===S.decided);
+  $main.innerHTML=`<section class="screen">
+    <header class="top"><div class="brand">買い物リスト<small>${m?m.name:""}の材料・${settings.people}人分</small></div></header>
+    <div class="panel">
+      <div class="month-row"><span>これから買う分</span><span class="num"><b>約${yen(left.reduce((a,i)=>a+i.price,0))}円</b></span></div>
+      <p class="hint" style="margin:0">家にあるもの・買ったものはチェックしてください。</p>
+      <div class="list">${S.shop.map((i,k)=>`<label class="item ${i.done?"done":""}"><input type="checkbox" id="shop-${k}" data-act="shop-check" data-i="${k}" ${i.done?"checked":""}><span>${i.name}</span><em>${i.qty}</em><em class="num">${yen(i.price)}円</em></label>`).join("")}</div>
+    </div>
+  </section>`;
+}
+
+function renderMoney(){
+  const mt=monthTotals();
+  const pct=Math.min(100,mt.total/settings.monthBudget*100);
+  const counts=Object.fromEntries(CATS.map(c=>[c,LOGS.filter(l=>l.cat===c).length]));
+  const n=LOGS.length;
+  const hist=LOGS.slice().sort((a,b)=>dayNum(b.d)-dayNum(a.d)).slice(0,10);
+  $main.innerHTML=`<section class="screen">
+    <header class="top"><div class="brand">9月の家計<small>晩ごはんの食材費</small></div></header>
+    <div class="kpis">
+      <div class="kpi wide"><small>今月の合計</small><b class="num">${yen(mt.total)}円</b>
+        <div class="bar" style="margin-top:8px"><i class="used" style="width:${pct}%"></i></div>
+        <small class="num">予算 ${yen(settings.monthBudget)}円・残り ${yen(settings.monthBudget-mt.total)}円（あと7日）</small></div>
+      <div class="kpi"><small>1食の平均</small><b class="num">${yen(mt.avg)}円</b></div>
+      <div class="kpi"><small>1人前の平均</small><b class="num">${yen(mt.avg/settings.people)}円</b></div>
+    </div>
+    <div class="panel">
+      <h3>主菜のバランス（${n}食）</h3>
+      <div class="bar" style="height:16px" role="img" aria-label="${CATS.map(c=>`${c}${counts[c]}回`).join("、")}">${CATS.map(c=>`<i class="${CAT_CLASS[c]}" style="width:${counts[c]/n*100}%"></i>`).join("")}</div>
+      <div class="legend">${CATS.map(c=>`<span><i class="${CAT_CLASS[c]}"></i>${c} ${counts[c]}回</span>`).join("")}</div>
+      <p class="hint" style="margin:0">お魚の日が週に${(counts["魚"]/n*7).toFixed(1)}回ほど。目安の週2回に近いペースです。</p>
+    </div>
+    <div class="panel"><h3>最近の記録</h3>
+      <div class="hist">${hist.map(l=>`<div class="hrow"><small class="num">${l.d}</small><span>${esc(l.name)}<span class="src ${l.real?"real":""}">${l.real?"実際":"推定"}</span></span><span class="num">${yen(l.cost)}円</span></div>`).join("")}</div>
+    </div>
+  </section>`;
+}
+
+function camIcon(s){return `<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h3l1.5-2.5h7L17 8h3a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1Z"/><circle cx="12" cy="13" r="3.5"/></svg>`}
+
+function render(){
+  ({home:renderHome,detail:renderDetail,fridge:renderFridge,shop:renderShop,money:renderMoney})[S.view]();
+  document.querySelectorAll("nav.tabs button").forEach(b=>b.setAttribute("aria-current",b.dataset.tab===S.tab?"page":"false"));
+  const left=S.shop.filter(i=>!i.done).length, bd=document.getElementById("shop-badge");
+  bd.hidden=!left; bd.textContent=left;
+}
+function go(view,tab){S.view=view;if(tab)S.tab=tab;render();window.scrollTo(0,0)}
+
+let toastT;
+function toast(msg){
+  document.querySelector(".toast")?.remove();
+  const t=document.createElement("div");t.className="toast";t.setAttribute("role","status");t.textContent=msg;
+  document.body.appendChild(t);clearTimeout(toastT);toastT=setTimeout(()=>t.remove(),2200);
+}
+
+function decide(id){
+  const m=MENUS.find(x=>x.id===id);
+  S.decided=id;
+  const k=settings.people/BASE_PEOPLE;
+  S.shop=m.ings.filter(i=>!i[0].startsWith("調味料")).map(i=>({name:i[0],qty:i[1]?scaleQty(i[1],k):"",price:i[2]*k,
+    done:S.fridge.some(f=>i[0].includes(f)||f.includes(i[0]))}));
+  toast("買い物リストに材料を入れました");
+  go("home","home");
+}
+
+function openCooked(){
+  const m=MENUS.find(x=>x.id===S.decided);
+  const est=Math.round(menuCost(m));
+  const wrap=document.createElement("div");wrap.className="sheet-wrap";
+  wrap.innerHTML=`<form class="sheet" id="cook-form" role="dialog" aria-label="作った料理の記録">
+    <h2>おつかれさまでした</h2>
+    <p class="hint" style="margin:0">${m.name}（${settings.people}人分）の推定は <b class="num">${yen(est)}円</b> です。実際の金額が分かれば直してください。</p>
+    <label class="money-in" for="cost-in"><input id="cost-in" inputmode="numeric" value="${est}" aria-label="金額"><span>円</span></label>
+    <button class="btn btn-primary" type="submit">記録する</button>
+    <button class="btn btn-ghost" type="button" data-act="close-sheet">あとで</button>
+  </form>`;
+  document.body.appendChild(wrap);
+  wrap.addEventListener("click",e=>{if(e.target===wrap||e.target.dataset.act==="close-sheet")wrap.remove()});
+  wrap.querySelector("form").addEventListener("submit",e=>{
+    e.preventDefault();
+    const v=parseInt(wrap.querySelector("#cost-in").value.replace(/[^\d]/g,""),10)||est;
+    LOGS.push({d:TODAY,name:m.name,cat:m.cat,main:m.main,genre:m.genre,taste:m.taste,cost:v,real:v!==est,id:m.id});
+    wrap.remove();
+    S.decided=null;S.shop=[];S.fridge=[];rankMenus();
+    toast(`${yen(v)}円を記録しました`);
+    go("money","money");
+  });
+}
+
+/* ===== 操作 ===== */
+document.addEventListener("click",e=>{
+  const tab=e.target.closest("nav.tabs button");
+  if(tab){go(tab.dataset.tab,tab.dataset.tab);return}
+  const f=e.target.closest("[data-filter]");
+  if(f){const v=f.dataset.filter;S.filters.has(v)?S.filters.delete(v):S.filters.add(v);rankMenus();render();return}
+  const a=e.target.closest("[data-act]");if(!a)return;
+  const act=a.dataset.act;
+  if(act==="reroll"){nextPick();render()}
+  else if(act==="decide"){decide(a.dataset.id?+a.dataset.id:current().m.id)}
+  else if(act==="undecide"){S.decided=null;S.shop=[];render()}
+  else if(act==="detail"){S.detailId=+a.dataset.id;go("detail","home")}
+  else if(act==="home"){go("home","home")}
+  else if(act==="ppl-"||act==="ppl+"){settings.people=Math.max(1,Math.min(6,settings.people+(act==="ppl+"?1:-1)));render()}
+  else if(act==="cooked"){openCooked()}
+  else if(act==="fridge"){S.photo=null;S.found=null;go("fridge","home")}
+  else if(act==="sample"){startScan("sample")}
+  else if(act==="retake"){S.photo=null;S.found=null;render()}
+  else if(act==="toggle-found"){const it=S.found[+a.dataset.i];it.on=!it.on;render()}
+  else if(act==="use-found"){
+    S.fridge=S.found.filter(x=>x.on).map(x=>x.n);
+    if(!S.fridge.length){toast("食材を1つ以上選んでください");return}
+    rankMenus();toast("冷蔵庫の食材で選び直しました");go("home","home");
+  }
+  else if(act==="clearfridge"){S.fridge=[];rankMenus();render()}
+});
+document.addEventListener("change",e=>{
+  if(e.target.id==="photo-in"&&e.target.files[0]){startScan(URL.createObjectURL(e.target.files[0]))}
+  if(e.target.dataset.act==="shop-check"){S.shop[+e.target.dataset.i].done=e.target.checked;render()}
+});
+document.addEventListener("submit",e=>{
+  if(e.target.id==="add-form"){
+    e.preventDefault();const v=document.getElementById("add-in").value.trim();
+    if(v){S.found.push({n:v,on:true});render()}
+  }
+});
+function startScan(src){
+  S.photo=src;S.scanning=true;S.found=SAMPLE_FOUND.map(x=>({...x}));render();
+  setTimeout(()=>{S.scanning=false;if(S.view==="fridge")render()},1400);
+}
+
+rankMenus();
+render();
+</script>
