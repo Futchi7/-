@@ -7,4 +7,6 @@
 - [リサーチレポート](docs/01_research_report.md)：悩みの実態、ペルソナ、競合分析、戦略上の見立て
 - [アプリ構成案](docs/02_app_structure.md)：機能、画面、マンネリ防止、費用計算、技術構成、進め方
 
+## 試作画面
 
+- [prototype/index.html](prototype/index.html)：スマホで触れる試作（見本データ）。「今日はこれです」→ 作り方 → 買い物リスト → 記録 → 家計 の流れを確認できます
